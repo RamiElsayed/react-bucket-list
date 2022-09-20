@@ -2,23 +2,26 @@ import { useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 export const BucketForm = ({ onSubmit, edit }) => {
-  const [text, setText] = useState("");
-  const [eagerness, setEagerness] = useState("low");
-
-  const eagernessLevel = ["high", "medium", "low"];
+  const [text, setText] = useState(edit?.text || "");
+  const [eagerness, setEagerness] = useState(edit?.eagerness || "");
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    onSubmit({
-      id: uuidv4(),
-      text,
-      eagerness: eagerness || "low",
-      isComplete: false,
-    });
+    if (edit?.id) {
+      console.log("update");
+      onSubmit({ ...edit, text, eagerness });
+    } else {
+      onSubmit({
+        id: uuidv4(),
+        text,
+        eagerness: eagerness || "low",
+        isComplete: false,
+      });
+    }
 
     setText("");
-    setEagerness("low");
+    setEagerness("");
   };
 
   const handleChange = (event) => {
@@ -75,7 +78,7 @@ export const BucketForm = ({ onSubmit, edit }) => {
       <form className="bucket-form" onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder={edit.value}
+          placeholder="Add to your bucket list"
           value={text}
           name="text"
           className="bucket-input"
@@ -86,7 +89,6 @@ export const BucketForm = ({ onSubmit, edit }) => {
             {eagerness || "Priority"}
           </button>
           <div className="dropdown-content">
-            {/* TODO: Add an onClick event that will set the corresponding eagerness level from the `eagernessLevel` array */}
             <p
               onClick={() => {
                 setEagerness("high");
